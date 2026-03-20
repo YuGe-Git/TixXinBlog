@@ -46,3 +46,40 @@
 .font-medium { font-weight: 500; }
 .font-semibold { font-weight: 600; }
 .font-bold { font-weight: 700; }
+
+// 页面切换过渡动画：主内容区纵向位移，右侧栏横向滑入滑出
+// 不在父容器 .page-columns 上设置 opacity，避免整块区域透明露出背景
+.page-enter-active,
+.page-leave-active {
+  .main-content {
+    transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .aside-right {
+    transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+.page-enter-from {
+  .main-content {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .aside-right {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
+
+.page-leave-to {
+  .main-content {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  .aside-right {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
