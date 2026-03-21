@@ -120,6 +120,7 @@ app/assets/styles/
 | PostCard.vue | 文章卡片，展示封面、标题、摘要、标签和元信息 |
 | PostCardList.vue | 文章卡片列表，按 Tab 过滤并渲染文章 |
 | PostTabs.vue | 文章分类 Tab 栏与搜索输入框 |
+| AppearanceEntry.vue | 左侧栏界面设置入口，展示当前主题与动画摘要并打开设置抽屉 |
 | SubscribeCard.vue | 邮件订阅卡片，提供邮箱输入和订阅按钮 |
 | ThemeSwitcher.vue | 主题切换器，支持亮色/跟随系统/暗色三种模式 |
 
@@ -127,6 +128,7 @@ app/assets/styles/
 
 | 文件 | 职责 |
 |------|------|
+| AppearanceDrawer.vue | 全局界面设置抽屉，集中管理颜色主题、主内容动画和左侧栏动画 |
 | BaseCard.vue | 通用卡片容器，支持可选的 hover 效果 |
 | PageHeader.vue | 通用页面标题组件，带图标、标题和副标题 |
 | ReadingProgress.vue | 固定在视口顶部的阅读进度条（3px，强调色） |
@@ -210,11 +212,13 @@ app/assets/styles/
 | 项目展示 | `features/project/` | `mockProjects`、`mockProjectStats`、`mockTechStack` 及 `ProjectItem`、`ProjectStats`、`TechStackItem`、`ProjectTag`、`ProjectLink` |
 | 站点 | `features/site/` | `mockFooterLinks`、`mockPoweredBy`、`mockSiteStatus`、`FooterLink`、`PoweredByItem`、`SiteStatus` |
 | 统计 | `features/stats/` | `mockSiteStats`、`mockTags`、`mockCategories`、`SiteStats`、`TagItem`、`CategoryItem` |
+| 主题与外观 | `features/theme/` | `COLOR_MODE_OPTIONS`、`CONTENT_TRANSITION_PRESETS`、`SIDEBAR_ANIMATION_PRESETS` 及 `ThemeOption`、`ContentTransitionPreset`、`SidebarAnimationPreset` |
 
 ## 组合式函数
 
 | 文件 | 职责 |
 |------|------|
+| composables/useAppearanceSettings.ts | 管理界面设置抽屉状态、动画偏好与本地持久化，并复用主题切换能力 |
 | composables/useTheme.ts | 主题切换逻辑，封装 colorMode 的读取与设置 |
 | composables/useReadingProgress.ts | 阅读进度 0–100，支持可选滚动根节点或文档滚动 |
 | composables/useTableOfContents.ts | 根据标题锚点 Intersection Observer 高亮当前目录项 |
