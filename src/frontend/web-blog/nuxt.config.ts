@@ -26,8 +26,8 @@ export default defineNuxtConfig({
   },
   colorMode: {
     classSuffix: '',       // html 上直接加 class="dark"，与原型一致
-    preference: 'system',
-    fallback: 'light',
+    preference: 'dark',
+    fallback: 'dark',
   },
   css: ['~/assets/styles/main.scss'],
   vite: {
