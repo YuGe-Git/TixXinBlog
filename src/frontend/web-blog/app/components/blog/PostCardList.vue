@@ -94,7 +94,8 @@ let observer: IntersectionObserver | null = null
 
 function getScrollRoot(): Element | null {
   const vp = scrollbarRef.value?.viewport
-  return vp instanceof HTMLElement ? vp : null
+  const el = unref(vp)
+  return el instanceof HTMLElement ? el : null
 }
 
 function setupObserver() {
@@ -112,13 +113,11 @@ function setupObserver() {
     },
   )
 
-  // 如果哨兵已存在，立即观察
   if (sentinelRef.value) {
     observer.observe(sentinelRef.value)
   }
 }
 
-// 哨兵出现/消失时重新观察
 watch(sentinelRef, (el) => {
   if (el && observer) {
     observer.observe(el)
