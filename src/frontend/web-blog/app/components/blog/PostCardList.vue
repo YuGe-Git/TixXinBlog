@@ -6,11 +6,13 @@
 -->
 
 <template>
-  <CommonCustomScrollbar
-    ref="scrollbarRef"
-    class="main-content__body"
-    viewport-class="post-list-viewport"
-  >
+    <CommonCustomScrollbar
+      ref="scrollbarRef"
+      class="main-content__body"
+      viewport-class="post-list-viewport"
+      show-progress
+      show-back-to-top
+    >
     <div class="post-list">
       <BlogPostCard
         v-for="post in displayedPosts"
@@ -156,10 +158,7 @@ onUnmounted(() => {
 .post-list {
   display: flex;
   flex-direction: column;
-
-  :deep(.post-item:last-child::after) {
-    display: none;
-  }
+  gap: 0.8rem;
 }
 
 .post-list__empty {
@@ -173,7 +172,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.8rem;
   padding: 1.5rem 0;
 }
 

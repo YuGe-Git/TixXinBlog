@@ -94,27 +94,21 @@ function tagStyle(color: string) {
   border-radius: $radius-md;
   overflow: hidden;
 
-  /* 80% 居中底部分割线 */
-  &::after {
+  /* 非首项：在间隔区域显示分割线（通过 ::before 上移实现） */
+  &:not(:first-child)::before {
     content: '';
     position: absolute;
-    bottom: 0;
+    top: -0.4rem;
     left: 10%;
     width: 80%;
     height: 1px;
     background-color: var(--border-soft);
-    transition: opacity 0.3s ease;
   }
 
   &:hover {
     background-color: var(--surface-2);
     box-shadow: var(--shadow-card);
-    
-    /* 悬浮时隐藏分割线，因为有了背景色和阴影 */
-    &::after {
-      opacity: 0;
-    }
-    
+
     .post-item__title {
       color: var(--accent);
     }
@@ -145,9 +139,9 @@ function tagStyle(color: string) {
   @media (min-width: $breakpoint-sm) {
     width: 45%; /* 桌面端占据右侧45%空间 */
     opacity: 1; /* 桌面端完全显示 */
-    /* 仅左侧10%透明渐变过渡，右侧完全不透明 */
-    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
+    /* 左侧约 25% 为透明渐变过渡，右侧完全不透明 */
+    mask-image: linear-gradient(to right, transparent 0%, black 35%, black 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 35%, black 100%);
   }
 
   img {
