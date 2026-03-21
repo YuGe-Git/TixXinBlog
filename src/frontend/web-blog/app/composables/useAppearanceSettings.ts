@@ -60,7 +60,7 @@ export function useAppearanceSettings() {
   )
   const sidebarAnimationLabel = computed(() =>
     SIDEBAR_ANIMATION_OPTIONS.find(option => option.value === sidebarAnimationPreset.value)?.label
-      ?? '轻微上浮',
+      ?? '右侧退出和进入',
   )
 
   const contentTransitionName = computed(() => {

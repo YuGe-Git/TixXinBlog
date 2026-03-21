@@ -70,9 +70,9 @@ export const CONTENT_TRANSITION_OPTIONS: AppearanceOption<ContentTransitionPrese
 export const SIDEBAR_ANIMATION_OPTIONS: AppearanceOption<SidebarAnimationPreset>[] = [
   {
     value: 'fade-in-up',
-    label: '轻微上浮',
-    description: '右侧栏带轻微向上浮入效果',
-    icon: 'lucide:panel-left-open',
+    label: '右侧退出和进入',
+    description: '右侧栏从右侧滑出、从右侧滑入',
+    icon: 'lucide:panel-right-open',
   },
   {
     value: 'scale',

@@ -110,6 +110,10 @@
   right: 0;
   animation: sidebar-leave 0.15s ease forwards;
   pointer-events: none;
+
+  &.sidebar-leave-slide-right {
+    animation: sidebar-leave-slide-right 0.2s ease forwards;
+  }
 }
 
 @keyframes sidebar-leave {
@@ -122,9 +126,21 @@
   }
 }
 
+@keyframes sidebar-leave-slide-right {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
 // 右侧栏动画预设：通过容器类名控制 Teleport 子元素的入场动画
 .anim-sidebar-up > *:not(.sidebar-leaving-clone) {
-  animation: sidebar-fade-in-up 0.35s ease-out both;
+  animation: sidebar-slide-in-right 0.35s ease-out both;
 }
 
 .anim-sidebar-fade > *:not(.sidebar-leaving-clone) {
@@ -139,15 +155,15 @@
   animation: none;
 }
 
-@keyframes sidebar-fade-in-up {
+@keyframes sidebar-slide-in-right {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateX(24px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 

@@ -38,6 +38,7 @@ const {
   contentTransitionName,
   contentTransitionDuration,
   sidebarAnimationClass,
+  sidebarAnimationPreset,
 } = useAppearanceSettings()
 
 /**
@@ -55,6 +56,9 @@ router.beforeEach(() => {
   const targetRect = target.getBoundingClientRect()
   const clone = source.cloneNode(true) as HTMLElement
   clone.classList.add('sidebar-leaving-clone')
+  if (sidebarAnimationPreset.value === 'fade-in-up') {
+    clone.classList.add('sidebar-leave-slide-right')
+  }
   clone.style.left = `${sourceRect.left - targetRect.left}px`
   clone.style.top = `${sourceRect.top - targetRect.top}px`
   clone.style.width = `${sourceRect.width}px`
