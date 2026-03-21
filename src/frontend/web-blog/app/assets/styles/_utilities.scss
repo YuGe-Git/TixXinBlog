@@ -102,11 +102,6 @@
   overflow-x: clip;
 }
 
-// 右侧栏入场动画（Teleport 内容挂载时触发）
-#right-sidebar-target > *:not(.sidebar-leaving-clone) {
-  animation: sidebar-enter 0.2s ease both;
-}
-
 // 右侧栏退出动画（router.beforeEach 克隆的元素）：纯淡出，避免 translateX 导致卡片宽度变化
 .sidebar-leaving-clone {
   position: absolute;
@@ -115,18 +110,6 @@
   right: 0;
   animation: sidebar-leave 0.15s ease forwards;
   pointer-events: none;
-}
-
-@keyframes sidebar-enter {
-  from {
-    opacity: 0;
-    transform: translateX(16px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
 }
 
 @keyframes sidebar-leave {
@@ -139,24 +122,20 @@
   }
 }
 
-// 左侧栏动画预设：延迟直接写入 shorthand，避免与外部 anim-delay 类的源序覆盖
-.anim-sidebar-up {
-  opacity: 0;
-  animation: sidebar-fade-in-up 0.45s ease-out 0.1s forwards;
+// 右侧栏动画预设：通过容器类名控制 Teleport 子元素的入场动画
+.anim-sidebar-up > *:not(.sidebar-leaving-clone) {
+  animation: sidebar-fade-in-up 0.35s ease-out both;
 }
 
-.anim-sidebar-fade {
-  opacity: 0;
-  animation: sidebar-fade-in 0.3s ease-out 0.1s forwards;
+.anim-sidebar-fade > *:not(.sidebar-leaving-clone) {
+  animation: sidebar-fade-in 0.25s ease-out both;
 }
 
-.anim-sidebar-scale {
-  opacity: 0;
-  animation: sidebar-scale-in 0.4s ease-out 0.1s forwards;
+.anim-sidebar-scale > *:not(.sidebar-leaving-clone) {
+  animation: sidebar-scale-in 0.3s ease-out both;
 }
 
-.anim-sidebar-none {
-  opacity: 1;
+.anim-sidebar-none > *:not(.sidebar-leaving-clone) {
   animation: none;
 }
 

@@ -1,6 +1,6 @@
 <!--
   @file AppearanceDrawer.vue
-  @description 全局界面设置弹出面板，从底部栏设置按钮上方弹出，集中管理颜色主题、主内容动画与左侧栏动画
+  @description 全局界面设置弹出面板，从底部栏设置按钮上方弹出，集中管理颜色主题、主内容动画与右侧栏动画
   @author TixXin
   @since 2026-03-20
 -->
@@ -62,7 +62,7 @@
 
           <section class="appearance-section">
             <div class="appearance-section__head">
-              <h3 class="appearance-section__title">左侧栏动画</h3>
+              <h3 class="appearance-section__title">右侧栏动画</h3>
               <span class="appearance-section__value">{{ sidebarAnimationLabel }}</span>
             </div>
             <div class="appearance-option-grid appearance-option-grid--anim">

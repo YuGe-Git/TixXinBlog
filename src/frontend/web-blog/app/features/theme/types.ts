@@ -71,13 +71,13 @@ export const SIDEBAR_ANIMATION_OPTIONS: AppearanceOption<SidebarAnimationPreset>
   {
     value: 'fade-in-up',
     label: '轻微上浮',
-    description: '左侧栏带轻微向上浮入效果',
+    description: '右侧栏带轻微向上浮入效果',
     icon: 'lucide:panel-left-open',
   },
   {
     value: 'scale',
     label: '缩放淡入',
-    description: '左侧栏从微缩状态放大显现',
+    description: '右侧栏从微缩状态放大显现',
     icon: 'lucide:maximize-2',
   },
   {
@@ -89,7 +89,7 @@ export const SIDEBAR_ANIMATION_OPTIONS: AppearanceOption<SidebarAnimationPreset>
   {
     value: 'none',
     label: '关闭动画',
-    description: '左侧栏静态显示',
+    description: '右侧栏静态显示',
     icon: 'lucide:pause',
   },
 ]

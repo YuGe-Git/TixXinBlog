@@ -8,7 +8,7 @@
 <template>
   <div class="page-root">
     <div class="blog-grid">
-      <aside class="aside-left" :class="sidebarAnimationClass">
+      <aside class="aside-left anim-fade-in-up anim-delay-1">
         <LayoutSidebarNav />
         <BlogSubscribeCard />
       </aside>
@@ -17,7 +17,7 @@
         <main class="main-content">
           <NuxtPage :transition="contentTransition" />
         </main>
-        <aside id="right-sidebar-target" class="aside-right" />
+        <aside id="right-sidebar-target" class="aside-right" :class="sidebarAnimationClass" />
       </div>
     </div>
 
