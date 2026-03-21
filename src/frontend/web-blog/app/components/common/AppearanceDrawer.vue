@@ -1,0 +1,288 @@
+<!--
+  @file AppearanceDrawer.vue
+  @description 全局界面设置弹出面板，从底部栏设置按钮上方弹出，集中管理颜色主题、主内容动画与左侧栏动画
+  @author TixXin
+  @since 2026-03-20
+-->
+
+<template>
+  <ClientOnly>
+    <!-- 遮罩独立 Teleport，设置区（按钮+面板）在 .footer-appearance 内保持同一叠层 -->
+    <Teleport to="body">
+      <Transition name="drawer-overlay">
+        <div
+          v-if="isDrawerOpen"
+          class="appearance-drawer__overlay"
+          @click="closeDrawer"
+        />
+      </Transition>
+    </Teleport>
+
+    <Transition name="drawer-panel">
+      <aside v-if="isDrawerOpen" class="appearance-drawer card">
+          <section class="appearance-section appearance-section--first">
+            <div class="appearance-section__head">
+              <h3 class="appearance-section__title">颜色主题</h3>
+              <span class="appearance-section__value">{{ themeLabel }}</span>
+            </div>
+            <div class="appearance-option-grid appearance-option-grid--theme">
+              <button
+                v-for="option in themeOptions"
+                :key="option"
+                type="button"
+                class="appearance-option"
+                :class="{ 'appearance-option--active': currentPreference === option }"
+                @click="setTheme(option)"
+              >
+                <Icon :name="themeIcons[option]" size="18" />
+                <span class="appearance-option__label">{{ themeLabels[option] }}</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="appearance-section">
+            <div class="appearance-section__head">
+              <h3 class="appearance-section__title">主内容切换</h3>
+              <span class="appearance-section__value">{{ contentTransitionLabel }}</span>
+            </div>
+            <div class="appearance-option-grid appearance-option-grid--anim">
+              <button
+                v-for="option in contentTransitionOptions"
+                :key="option.value"
+                type="button"
+                class="appearance-option"
+                :class="{ 'appearance-option--active': contentTransitionPreset === option.value }"
+                @click="setContentTransitionPreset(option.value)"
+              >
+                <Icon :name="option.icon || 'lucide:sparkles'" size="18" />
+                <span class="appearance-option__label">{{ option.label }}</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="appearance-section">
+            <div class="appearance-section__head">
+              <h3 class="appearance-section__title">左侧栏动画</h3>
+              <span class="appearance-section__value">{{ sidebarAnimationLabel }}</span>
+            </div>
+            <div class="appearance-option-grid appearance-option-grid--anim">
+              <button
+                v-for="option in sidebarAnimationOptions"
+                :key="option.value"
+                type="button"
+                class="appearance-option"
+                :class="{ 'appearance-option--active': sidebarAnimationPreset === option.value }"
+                @click="setSidebarAnimationPreset(option.value)"
+              >
+                <Icon :name="option.icon || 'lucide:panel-left-open'" size="18" />
+                <span class="appearance-option__label">{{ option.label }}</span>
+              </button>
+            </div>
+          </section>
+
+          <footer class="appearance-drawer__footer">
+            <button type="button" class="appearance-drawer__reset" @click="resetAppearanceSettings">
+              恢复默认
+            </button>
+          </footer>
+        </aside>
+    </Transition>
+  </ClientOnly>
+</template>
+
+<script setup lang="ts">
+import { COLOR_MODE_LABELS } from '~/features/theme/types'
+
+const {
+  isDrawerOpen,
+  closeDrawer,
+  currentPreference,
+  themeOptions,
+  setTheme,
+  themeLabel,
+  contentTransitionPreset,
+  contentTransitionOptions,
+  contentTransitionLabel,
+  setContentTransitionPreset,
+  sidebarAnimationPreset,
+  sidebarAnimationOptions,
+  sidebarAnimationLabel,
+  setSidebarAnimationPreset,
+  resetAppearanceSettings,
+} = useAppearanceSettings()
+
+const themeLabels = COLOR_MODE_LABELS
+
+const themeIcons = {
+  light: 'lucide:sun',
+  system: 'lucide:monitor',
+  dark: 'lucide:moon',
+}
+
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && isDrawerOpen.value) {
+    closeDrawer()
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
+</script>
+
+<style lang="scss" scoped>
+.appearance-drawer__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.42);
+  backdrop-filter: blur(6px);
+  z-index: 79;
+}
+
+/* 相对 .footer-appearance 锚定，水平居中对齐设置按钮，从按钮上方弹出 */
+.appearance-drawer {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 0.75rem);
+  transform: translateX(-50%);
+  width: min(29rem, calc(100vw - 2rem));
+  max-height: min(70vh, 28rem);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
+  /* 高于同容器内的设置按钮，避免被遮挡 */
+  z-index: 2;
+}
+
+.appearance-section {
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-soft);
+
+  & + .appearance-section {
+    margin-top: 0.5rem;
+  }
+}
+
+.appearance-section--first {
+  padding-top: 0;
+  border-top: none;
+}
+
+.appearance-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.appearance-section__title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.appearance-section__value {
+  font-size: 0.6875rem;
+  color: var(--text-soft);
+}
+
+.appearance-option-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.appearance-option-grid--theme {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.appearance-option-grid--anim {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.appearance-option {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.25rem;
+  border-radius: $radius-md;
+  border: 1px solid var(--border);
+  background: var(--surface-1);
+  color: var(--text-soft);
+  transition: $transition-fast;
+
+  &:hover {
+    border-color: var(--border-hover);
+    color: var(--text-main);
+  }
+}
+
+.appearance-option--active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--text-main);
+  box-shadow: inset 0 0 0 1px rgba(91, 124, 250, 0.16);
+}
+
+.appearance-option__label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.appearance-drawer__footer {
+  margin-top: 0.75rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid var(--border-soft);
+}
+
+.appearance-drawer__reset {
+  width: 100%;
+  padding: 0.4rem 1rem;
+  border-radius: $radius-md;
+  background: var(--surface-2);
+  color: var(--text-main);
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: $transition-fast;
+
+  &:hover {
+    background: var(--surface-3);
+  }
+}
+
+:global(.drawer-overlay-enter-active),
+:global(.drawer-overlay-leave-active) {
+  transition: opacity 0.18s ease;
+}
+
+:global(.drawer-overlay-enter-from),
+:global(.drawer-overlay-leave-to) {
+  opacity: 0;
+}
+
+/* 面板从下方向上弹出，保持水平居中（translateX(-50%)） */
+:global(.drawer-panel-enter-active),
+:global(.drawer-panel-leave-active) {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+:global(.drawer-panel-enter-from),
+:global(.drawer-panel-leave-to) {
+  opacity: 0;
+  transform: translate(-50%, 16px);
+}
+
+:global(.drawer-panel-enter-to),
+:global(.drawer-panel-leave-from) {
+  transform: translate(-50%, 0);
+}
+</style>

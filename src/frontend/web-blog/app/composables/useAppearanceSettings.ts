@@ -1,0 +1,209 @@
+/**
+ * @file useAppearanceSettings.ts
+ * @description 管理界面设置抽屉状态、动画偏好与本地持久化，并复用主题切换能力
+ * @author TixXin
+ * @since 2026-03-20
+ */
+
+import type {
+  ContentTransitionPreset,
+  SidebarAnimationPreset,
+} from '~/features/theme/types'
+import { nextTick } from 'vue'
+import {
+  COLOR_MODE_LABELS,
+  CONTENT_TRANSITION_OPTIONS,
+  DEFAULT_CONTENT_TRANSITION_PRESET,
+  DEFAULT_SIDEBAR_ANIMATION_PRESET,
+  SIDEBAR_ANIMATION_OPTIONS,
+} from '~/features/theme/types'
+
+const STORAGE_KEY = 'tixxin-blog-appearance'
+
+interface AppearanceStorage {
+  contentTransitionPreset: ContentTransitionPreset
+  sidebarAnimationPreset: SidebarAnimationPreset
+}
+
+/** 关闭抽屉后让触发按钮失焦，避免 ESC/点击关闭后残留浏览器默认 focus 轮廓 */
+function blurAppearanceTrigger() {
+  if (!import.meta.client) return
+
+  nextTick(() => {
+    const trigger = document.querySelector('button.appearance-fab')
+
+    if (trigger instanceof HTMLElement) {
+      trigger.blur()
+    }
+  })
+}
+
+export function useAppearanceSettings() {
+  const { currentPreference, themeOptions, setTheme } = useTheme()
+
+  const isDrawerOpen = useState('appearance-drawer-open', () => false)
+  const contentTransitionPreset = useState<ContentTransitionPreset>(
+    'appearance-content-transition-preset',
+    () => DEFAULT_CONTENT_TRANSITION_PRESET,
+  )
+  const sidebarAnimationPreset = useState<SidebarAnimationPreset>(
+    'appearance-sidebar-animation-preset',
+    () => DEFAULT_SIDEBAR_ANIMATION_PRESET,
+  )
+  const initialized = useState('appearance-settings-initialized', () => false)
+  const persistenceBound = useState('appearance-settings-persistence-bound', () => false)
+
+  const themeLabel = computed(() => COLOR_MODE_LABELS[currentPreference.value])
+  const contentTransitionLabel = computed(() =>
+    CONTENT_TRANSITION_OPTIONS.find(option => option.value === contentTransitionPreset.value)?.label
+      ?? '纵向滑动',
+  )
+  const sidebarAnimationLabel = computed(() =>
+    SIDEBAR_ANIMATION_OPTIONS.find(option => option.value === sidebarAnimationPreset.value)?.label
+      ?? '轻微上浮',
+  )
+
+  const contentTransitionName = computed(() => {
+    switch (contentTransitionPreset.value) {
+      case 'soft-slide':
+        return 'content-soft'
+      case 'fade':
+        return 'content-fade'
+      case 'none':
+        return 'content-none'
+      case 'vertical-slide':
+      default:
+        return 'content-vertical'
+    }
+  })
+
+  const contentTransitionDuration = computed(() => {
+    switch (contentTransitionPreset.value) {
+      case 'none':
+        return 0
+      case 'soft-slide':
+        return 160
+      case 'fade':
+        return 140
+      case 'vertical-slide':
+      default:
+        return 180
+    }
+  })
+
+  /**
+   * SSR 期间无法读 localStorage，若直接输出动画类会按默认值播放，
+   * 等客户端还原设置后再切换类已来不及（动画已播完）。
+   * 因此 SSR 阶段返回空字符串，客户端初始化完成后再输出正确的动画类。
+   */
+  const sidebarAnimationClass = computed(() => {
+    if (!import.meta.client) return ''
+
+    switch (sidebarAnimationPreset.value) {
+      case 'scale':
+        return 'anim-sidebar-scale'
+      case 'fade':
+        return 'anim-sidebar-fade'
+      case 'none':
+        return 'anim-sidebar-none'
+      case 'fade-in-up':
+      default:
+        return 'anim-sidebar-up'
+    }
+  })
+
+  function openDrawer() {
+    isDrawerOpen.value = true
+  }
+
+  function closeDrawer() {
+    isDrawerOpen.value = false
+    blurAppearanceTrigger()
+  }
+
+  function toggleDrawer() {
+    const next = !isDrawerOpen.value
+    isDrawerOpen.value = next
+
+    if (!next) {
+      blurAppearanceTrigger()
+    }
+  }
+
+  function setContentTransitionPreset(preset: ContentTransitionPreset) {
+    contentTransitionPreset.value = preset
+  }
+
+  function setSidebarAnimationPreset(preset: SidebarAnimationPreset) {
+    sidebarAnimationPreset.value = preset
+  }
+
+  function resetAppearanceSettings() {
+    setTheme('system')
+    contentTransitionPreset.value = DEFAULT_CONTENT_TRANSITION_PRESET
+    sidebarAnimationPreset.value = DEFAULT_SIDEBAR_ANIMATION_PRESET
+  }
+
+  if (import.meta.client && !initialized.value) {
+    initialized.value = true
+
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+
+      if (stored) {
+        const parsed = JSON.parse(stored) as Partial<AppearanceStorage>
+
+        if (parsed.contentTransitionPreset) {
+          contentTransitionPreset.value = parsed.contentTransitionPreset
+        }
+
+        if (parsed.sidebarAnimationPreset) {
+          sidebarAnimationPreset.value = parsed.sidebarAnimationPreset
+        }
+      }
+    }
+    catch {
+      localStorage.removeItem(STORAGE_KEY)
+    }
+  }
+
+  if (import.meta.client && !persistenceBound.value) {
+    persistenceBound.value = true
+
+    watch(
+      [contentTransitionPreset, sidebarAnimationPreset],
+      () => {
+        const payload: AppearanceStorage = {
+          contentTransitionPreset: contentTransitionPreset.value,
+          sidebarAnimationPreset: sidebarAnimationPreset.value,
+        }
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
+      },
+      { deep: false },
+    )
+  }
+
+  return {
+    isDrawerOpen,
+    themeOptions,
+    currentPreference,
+    setTheme,
+    themeLabel,
+    contentTransitionPreset,
+    contentTransitionOptions: CONTENT_TRANSITION_OPTIONS,
+    contentTransitionLabel,
+    contentTransitionName,
+    contentTransitionDuration,
+    setContentTransitionPreset,
+    sidebarAnimationPreset,
+    sidebarAnimationOptions: SIDEBAR_ANIMATION_OPTIONS,
+    sidebarAnimationLabel,
+    sidebarAnimationClass,
+    setSidebarAnimationPreset,
+    openDrawer,
+    closeDrawer,
+    toggleDrawer,
+    resetAppearanceSettings,
+  }
+}
