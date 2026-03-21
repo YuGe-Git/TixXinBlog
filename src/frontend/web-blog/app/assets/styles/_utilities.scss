@@ -47,39 +47,149 @@
 .font-semibold { font-weight: 600; }
 .font-bold { font-weight: 700; }
 
-// 页面切换过渡动画：主内容区纵向位移，右侧栏横向滑入滑出
-// 不在父容器 .page-columns 上设置 opacity，避免整块区域透明露出背景
-.page-enter-active,
-.page-leave-active {
-  .main-content {
-    transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+// 主内容卡片内部过渡动画：旧内容向下滑出，新内容从上方滑入
+.content-vertical-enter-active,
+.content-vertical-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.content-vertical-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.content-vertical-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+// 主内容卡片内部过渡动画：轻柔滑动
+.content-soft-enter-active,
+.content-soft-leave-active {
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+
+.content-soft-enter-from {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.content-soft-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+// 主内容卡片内部过渡动画：淡入淡出
+.content-fade-enter-active,
+.content-fade-leave-active {
+  transition: opacity 0.14s ease;
+}
+
+.content-fade-enter-from,
+.content-fade-leave-to {
+  opacity: 0;
+}
+
+// 主内容卡片内部过渡动画：关闭动画
+.content-none-enter-active,
+.content-none-leave-active {
+  transition: none;
+}
+
+// 右侧栏容器：relative 支持克隆元素绝对定位，clip 防止退场 translateX 产生溢出滚动条
+#right-sidebar-target {
+  position: relative;
+  overflow-x: clip;
+}
+
+// 右侧栏入场动画（Teleport 内容挂载时触发）
+#right-sidebar-target > *:not(.sidebar-leaving-clone) {
+  animation: sidebar-enter 0.2s ease both;
+}
+
+// 右侧栏退出动画（router.beforeEach 克隆的元素）：纯淡出，避免 translateX 导致卡片宽度变化
+.sidebar-leaving-clone {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  animation: sidebar-leave 0.15s ease forwards;
+  pointer-events: none;
+}
+
+@keyframes sidebar-enter {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
   }
 
-  .aside-right {
-    transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
 
-.page-enter-from {
-  .main-content {
-    opacity: 0;
-    transform: translateY(10px);
+@keyframes sidebar-leave {
+  from {
+    opacity: 1;
   }
 
-  .aside-right {
+  to {
     opacity: 0;
-    transform: translateX(30px);
   }
 }
 
-.page-leave-to {
-  .main-content {
+// 左侧栏动画预设：延迟直接写入 shorthand，避免与外部 anim-delay 类的源序覆盖
+.anim-sidebar-up {
+  opacity: 0;
+  animation: sidebar-fade-in-up 0.45s ease-out 0.1s forwards;
+}
+
+.anim-sidebar-fade {
+  opacity: 0;
+  animation: sidebar-fade-in 0.3s ease-out 0.1s forwards;
+}
+
+.anim-sidebar-scale {
+  opacity: 0;
+  animation: sidebar-scale-in 0.4s ease-out 0.1s forwards;
+}
+
+.anim-sidebar-none {
+  opacity: 1;
+  animation: none;
+}
+
+@keyframes sidebar-fade-in-up {
+  from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(16px);
   }
 
-  .aside-right {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sidebar-fade-in {
+  from {
     opacity: 0;
-    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sidebar-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

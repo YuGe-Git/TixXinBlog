@@ -1,20 +1,10 @@
 <!--
   @file app.vue
-  @description Nuxt 应用根组件，挂载布局与页面，配置页面切换过渡动画
+  @description Nuxt 应用根组件，挂载布局（NuxtPage 已移入 layouts/default.vue 以实现卡片持久化）
   @author TixXin
   @since 2025-03-17
 -->
 
 <template>
-  <NuxtLayout>
-    <NuxtPage :transition="pageTransition" />
-  </NuxtLayout>
+  <NuxtLayout />
 </template>
-
-<script setup lang="ts">
-const pageTransition = {
-  name: 'page',
-  mode: 'out-in' as const,
-  duration: 300,
-}
-</script>

@@ -6,7 +6,7 @@
 -->
 
 <template>
-  <footer class="site-footer anim-fade-in-up anim-delay-5">
+  <footer class="site-footer">
     <div class="footer__left">
       <span>&copy; 2024 TixXin Blog. All rights reserved.</span>
       <div class="footer__links">

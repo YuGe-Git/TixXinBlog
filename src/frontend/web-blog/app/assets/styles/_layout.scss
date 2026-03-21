@@ -46,21 +46,12 @@
   }
 }
 
-// 内容区容器：承接 NuxtPage 渲染，传递高度给页面根元素
-.blog-content {
-  min-width: 0;
-
-  @media (min-width: $breakpoint-xl) {
-    min-height: 0;
-    height: 100%;
-  }
-}
-
-// 页面单根包裹：每个页面的根 div，负责中间+右侧栏的网格拆分
+// 持久化网格：主内容卡片 + 右侧栏，页面切换时容器不重建
 .page-columns {
   display: flex;
   flex-direction: column;
   gap: $grid-gap;
+  min-width: 0;
   height: 100%;
 
   @media (min-width: $breakpoint-xl) {
@@ -69,6 +60,14 @@
     gap: $grid-gap;
     min-height: 0;
   }
+}
+
+// 页面内部内容根元素（由 NuxtPage 渲染的页面组件提供）
+.main-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .aside-left {
@@ -143,6 +142,66 @@
   }
 }
 
+// 底部栏容器：footer + 设置按钮并排（移动端仅显示设置入口）
+.footer-row {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  flex-shrink: 0;
+
+  @media (min-width: $breakpoint-xl) {
+    justify-content: flex-start;
+  }
+}
+
+// 设置按钮 + 弹出面板锚点：高于遮罩层，与面板同属一层
+// 卡片样式写在容器上，避免全局 button 重置（background/border:none）吃掉按钮外观
+.footer-appearance {
+  position: relative;
+  z-index: 82;
+  flex-shrink: 0;
+  isolation: isolate;
+  border-radius: $radius-md;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  background: var(--surface-1-alpha);
+  backdrop-filter: blur(12px);
+  /* 必须为 visible：设置面板在容器上方绝对定位，hidden 会把整块弹窗裁掉 */
+  overflow: visible;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  /* 移动端：固定于右下角，作为面板的定位参照 */
+  @media (max-width: #{$breakpoint-xl - 0.02}) {
+    position: fixed;
+    right: 1rem;
+    bottom: calc(4.5rem + env(safe-area-inset-bottom));
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  /* 桌面端：与左侧底部栏同高，宽度随正方形按钮收缩（避免竖条窄卡） */
+  @media (min-width: $breakpoint-xl) {
+    display: inline-flex;
+    align-self: stretch;
+    width: auto;
+    min-width: 0;
+    flex: 0 0 auto;
+  }
+}
+
 .site-footer {
   display: none;
 
@@ -150,17 +209,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
-    max-width: $container-max-width;
-    margin: 0 auto;
+    flex: 1;
+    min-width: 0;
     padding: 0.75rem 1.5rem;
     font-size: 0.75rem;
     background: var(--surface-1-alpha);
     backdrop-filter: blur(12px);
-    border-radius: $radius-card;
+    /* 与右侧设置图标卡片（.footer-appearance）圆角一致 */
+    border-radius: $radius-md;
     border: 1px solid var(--border);
     box-shadow: var(--shadow-card);
-    flex-shrink: 0;
     transition: $transition-colors;
   }
 }
