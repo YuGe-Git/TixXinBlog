@@ -20,6 +20,19 @@
     >
       <slot />
     </div>
+
+    <!-- 滚动进度条 -->
+    <div
+      v-if="showProgress"
+      class="custom-scrollbar__progress"
+      aria-hidden="true"
+    >
+      <div
+        class="custom-scrollbar__progress-bar"
+        :style="progressBarStyle"
+      />
+    </div>
+
     <Transition name="scrollbar-fade">
       <div
         v-show="thumbVisible && needsScrollbar"
@@ -35,6 +48,19 @@
         />
       </div>
     </Transition>
+
+    <!-- 返回顶部 -->
+    <Transition name="back-to-top">
+      <button
+        v-if="showBackToTop && showBackToTopBtn"
+        type="button"
+        class="custom-scrollbar__back-to-top"
+        aria-label="返回顶部"
+        @click="scrollToTop(true)"
+      >
+        <Icon name="lucide:chevron-up" size="20" />
+      </button>
+    </Transition>
   </div>
 </template>
 
@@ -44,8 +70,17 @@ const props = withDefaults(defineProps<{
   viewportClass?: string | string[] | Record<string, boolean>
   /** 滚动条自动隐藏延迟（ms） */
   autoHideDelay?: number
+  /** 是否显示顶部滚动进度条 */
+  showProgress?: boolean
+  /** 是否显示返回顶部按钮 */
+  showBackToTop?: boolean
+  /** 返回顶部按钮出现阈值（px） */
+  backToTopThreshold?: number
 }>(), {
   autoHideDelay: 1500,
+  showProgress: false,
+  showBackToTop: false,
+  backToTopThreshold: 300,
 })
 
 const rootRef = ref<HTMLElement | null>(null)
@@ -57,6 +92,8 @@ const thumbVisible = ref(false)
 const isDragging = ref(false)
 const thumbHeight = ref(0)
 const thumbTop = ref(0)
+const scrollProgress = ref(0)
+const showBackToTopBtn = ref(false)
 
 let hideTimer: ReturnType<typeof setTimeout> | null = null
 let resizeObserver: ResizeObserver | null = null
@@ -65,6 +102,10 @@ let mutationObserver: MutationObserver | null = null
 const thumbStyle = computed(() => ({
   height: `${thumbHeight.value}px`,
   transform: `translateY(${thumbTop.value}px)`,
+}))
+
+const progressBarStyle = computed(() => ({
+  transform: `scaleX(${scrollProgress.value / 100})`,
 }))
 
 function updateMetrics() {
@@ -76,8 +117,9 @@ function updateMetrics() {
 
   if (!needsScrollbar.value) return
 
-  const trackEl = trackRef.value
-  const trackHeight = trackEl ? trackEl.clientHeight : clientHeight - 8
+  // track 被 v-show 隐藏时 clientHeight 为 0，退回视口高度减去 track 上下边距
+  const rawTrackHeight = trackRef.value?.clientHeight ?? 0
+  const trackHeight = rawTrackHeight > 0 ? rawTrackHeight : clientHeight - 8
   const ratio = clientHeight / scrollHeight
   thumbHeight.value = Math.max(ratio * trackHeight, 32)
 
@@ -90,11 +132,20 @@ function onScroll() {
   updateMetrics()
   reveal()
   scheduleHide()
+
+  const el = viewportRef.value
+  if (!el) return
+  const { scrollTop, scrollHeight, clientHeight } = el
+  const scrollRange = scrollHeight - clientHeight
+  scrollProgress.value = scrollRange > 0 ? (scrollTop / scrollRange) * 100 : 0
+  showBackToTopBtn.value = scrollTop > props.backToTopThreshold
 }
 
 function reveal() {
   if (hideTimer) clearTimeout(hideTimer)
   thumbVisible.value = true
+  // track 从隐藏变可见后 DOM 尺寸才更新，等下一帧用真实 trackHeight 修正滑块
+  nextTick(updateMetrics)
 }
 
 function scheduleHide() {
@@ -159,16 +210,20 @@ function onTrackMouseDown(e: MouseEvent) {
   })
 }
 
+function scrollToTop(smooth = true) {
+  viewportRef.value?.scrollTo({
+    top: 0,
+    behavior: smooth ? 'smooth' : 'instant',
+  })
+}
+
 defineExpose({
   /** 滚动视口元素 */
   viewport: viewportRef,
+  /** 滚动进度 0~100 */
+  scrollProgress,
   /** 滚动到顶部 */
-  scrollToTop(smooth = true) {
-    viewportRef.value?.scrollTo({
-      top: 0,
-      behavior: smooth ? 'smooth' : 'instant',
-    })
-  },
+  scrollToTop,
 })
 
 onMounted(() => {
@@ -215,6 +270,76 @@ onUnmounted(() => {
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+.custom-scrollbar__progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 15;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.custom-scrollbar__progress-bar {
+  height: 100%;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform 0.1s ease-out;
+}
+
+.custom-scrollbar__back-to-top {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 20;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-full;
+  border: 1px solid var(--border);
+  background: var(--surface-1-alpha);
+  backdrop-filter: blur(12px);
+  color: var(--text-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+
+  &:hover {
+    background: var(--surface-2);
+    border-color: var(--border-hover);
+    color: var(--text-main);
+    box-shadow: var(--shadow-card);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media (max-width: #{$breakpoint-sm - 0.02}) {
+    width: 36px;
+    height: 36px;
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+.back-to-top-enter-active {
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+}
+
+.back-to-top-leave-active {
+  transition: opacity 0.2s ease-in, transform 0.2s ease-in;
+}
+
+.back-to-top-enter-from,
+.back-to-top-leave-to {
+  opacity: 0;
+  transform: scale(0.8) translateY(8px);
 }
 
 .custom-scrollbar__track {
