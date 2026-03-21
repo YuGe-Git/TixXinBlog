@@ -9,9 +9,9 @@
   <div class="main-inner">
     <div class="guestbook-center">
       <GuestbookHeader :member-count="totalMessageCount" />
-      <div class="guestbook-center__messages">
+      <CommonCustomScrollbar class="guestbook-center__messages" viewport-class="guestbook-viewport">
         <GuestbookMessageList :groups="dateGroups" />
-      </div>
+      </CommonCustomScrollbar>
       <GuestbookMessageInput />
     </div>
     <ClientOnly>
@@ -56,6 +56,5 @@ const totalMessageCount = computed(() =>
 .guestbook-center__messages {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
 }
 </style>

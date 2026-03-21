@@ -16,10 +16,10 @@
         <CommonSearchBox placeholder="搜索友链..." />
       </template>
     </CommonPageHeader>
-    <div class="links-body">
+    <CommonCustomScrollbar class="links-body" viewport-class="links-viewport">
       <LinkGrid :links="links" />
       <LinkForm />
-    </div>
+    </CommonCustomScrollbar>
     <ClientOnly>
       <Teleport to="#right-sidebar-target">
         <SidebarRightSidebar>
@@ -42,7 +42,10 @@ const siteInfo = mockSiteInfo
 <style lang="scss" scoped>
 .links-body {
   flex: 1;
+  padding: 0;
+}
+
+:deep(.links-viewport) {
   padding: 2rem;
-  overflow-y: auto;
 }
 </style>

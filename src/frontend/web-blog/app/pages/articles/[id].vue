@@ -8,7 +8,7 @@
 <template>
   <div class="main-inner">
     <CommonReadingProgress :progress="progress" />
-    <div ref="scrollRoot" class="article-page">
+    <CommonCustomScrollbar ref="scrollbarRef" class="article-page" viewport-class="article-viewport">
       <ArticleStickyHeader
         :title="article.title"
         :category="article.category"
@@ -42,7 +42,7 @@
         <ArticleNav />
         <ArticleCommentSection :comments="comments" />
       </div>
-    </div>
+    </CommonCustomScrollbar>
     <ClientOnly>
       <Teleport to="#right-sidebar-target">
         <SidebarRightSidebar>
@@ -64,7 +64,8 @@ import {
 } from '~/features/post/mock'
 
 const route = useRoute()
-const scrollRoot = ref<HTMLElement | null>(null)
+const scrollbarRef = ref<{ viewport: Ref<HTMLElement | null> } | null>(null)
+const scrollRoot = computed(() => scrollbarRef.value?.viewport.value ?? null)
 
 const article = computed(() => {
   void route.params.id
@@ -90,10 +91,7 @@ useHead(() => ({
 <style lang="scss" scoped>
 .article-page {
   flex: 1;
-  display: flex;
-  flex-direction: column;
   min-height: 0;
-  overflow-y: auto;
 }
 
 .article-page__inner {

@@ -16,9 +16,9 @@
         <CommonSearchBox placeholder="搜索项目..." />
       </template>
     </CommonPageHeader>
-    <div class="projects-body">
+    <CommonCustomScrollbar class="projects-body" viewport-class="projects-viewport">
       <ProjectGrid :projects="projects" />
-    </div>
+    </CommonCustomScrollbar>
     <ClientOnly>
       <Teleport to="#right-sidebar-target">
         <SidebarRightSidebar>
@@ -41,7 +41,10 @@ const techStack = mockTechStack
 <style lang="scss" scoped>
 .projects-body {
   flex: 1;
+  padding: 0;
+}
+
+:deep(.projects-viewport) {
   padding: 2rem;
-  overflow-y: auto;
 }
 </style>

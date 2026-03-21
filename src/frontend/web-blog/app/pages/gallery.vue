@@ -16,7 +16,7 @@
         <CommonSearchBox placeholder="搜索照片..." />
       </template>
     </CommonPageHeader>
-    <div class="gallery-body">
+    <CommonCustomScrollbar class="gallery-body" viewport-class="gallery-viewport">
       <GalleryFilter
         v-model="activeFilter"
         :categories="categories"
@@ -25,7 +25,7 @@
         :photos="filteredPhotos"
         @select="openLightBox"
       />
-    </div>
+    </CommonCustomScrollbar>
     <GalleryLightBox
       :photo="selectedPhoto"
       :visible="lightBoxVisible"
@@ -81,7 +81,10 @@ function closeLightBox() {
 <style lang="scss" scoped>
 .gallery-body {
   flex: 1;
+  padding: 0;
+}
+
+:deep(.gallery-viewport) {
   padding: 0 2rem 2rem;
-  overflow-y: auto;
 }
 </style>

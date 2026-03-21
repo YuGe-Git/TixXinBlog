@@ -10,12 +10,12 @@
     <header class="about-header">
       <CommonSearchBox placeholder="搜索..." />
     </header>
-    <div class="about-body">
+    <CommonCustomScrollbar class="about-body" viewport-class="about-viewport">
       <AboutHero :profile="profile" />
       <AboutSkillBars :skills="skills" />
       <AboutExperienceTimeline :experiences="experiences" />
       <AboutContactCards :contacts="contacts" />
-    </div>
+    </CommonCustomScrollbar>
     <ClientOnly>
       <Teleport to="#right-sidebar-target">
         <SidebarRightSidebar>
@@ -55,7 +55,10 @@ const readings = mockReadings
 
 .about-body {
   flex: 1;
+  padding: 0;
+}
+
+:deep(.about-viewport) {
   padding: 1rem 2rem 2rem;
-  overflow-y: auto;
 }
 </style>

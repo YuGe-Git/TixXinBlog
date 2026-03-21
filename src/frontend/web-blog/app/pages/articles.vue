@@ -16,9 +16,9 @@
         <CommonSearchBox placeholder="搜索文章标题、内容..." />
       </template>
     </CommonPageHeader>
-    <div class="articles-body">
+    <CommonCustomScrollbar class="articles-body" viewport-class="articles-viewport">
       <ArticleArchiveTimeline :years="archiveYears" />
-    </div>
+    </CommonCustomScrollbar>
     <ClientOnly>
       <Teleport to="#right-sidebar-target">
         <SidebarRightSidebar>
@@ -47,7 +47,10 @@ const categoryDistribution = mockCategoryDistribution
 <style lang="scss" scoped>
 .articles-body {
   flex: 1;
+  padding: 0;
+}
+
+:deep(.articles-viewport) {
   padding: 1.5rem 2rem 2rem;
-  overflow-y: auto;
 }
 </style>
