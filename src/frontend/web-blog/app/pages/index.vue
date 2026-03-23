@@ -1,20 +1,21 @@
 <!--
   @file index.vue
-  @description 博客首页，组装三栏布局并引入 mock 数据驱动各组件
+  @description 博客首页，主内容区暂为空态提示，右侧栏仅展示站点统计
   @author TixXin
   @since 2025-03-17
 -->
 
 <template>
-  <div class="main-inner">
-    <BlogPostTabs v-model="activeTab" />
-    <BlogPostCardList :posts="posts" :active-tab="activeTab" />
+  <div class="main-inner home-page">
+    <CommonStateBlock
+      icon="lucide:construction"
+      title="页面建设中"
+      description="主页内容正在设计，敬请期待..."
+    />
     <ClientOnly>
       <Teleport to="#right-sidebar-target">
         <SidebarRightSidebar>
           <SidebarSiteStatsCard :stats="siteStats" />
-          <SidebarTagCloudCard :tags="tags" />
-          <SidebarCategoryCard :categories="categories" />
         </SidebarRightSidebar>
       </Teleport>
     </ClientOnly>
@@ -22,12 +23,14 @@
 </template>
 
 <script setup lang="ts">
-import { mockPosts } from '~/features/post/mock'
-import { mockSiteStats, mockTags, mockCategories } from '~/features/stats/mock'
+import { mockSiteStats } from '~/features/stats/mock'
 
-const activeTab = ref('all')
-const posts = mockPosts
 const siteStats = mockSiteStats
-const tags = mockTags
-const categories = mockCategories
 </script>
+
+<style lang="scss" scoped>
+.home-page {
+  display: flex;
+  flex-direction: column;
+}
+</style>
