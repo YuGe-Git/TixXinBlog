@@ -21,12 +21,13 @@ alwaysApply: true
 
 ## 2. Git MCP Server — Git 版本控制
 
-**用途**：执行 Git 操作，仓库路径固定为 `E:\Projects\TixXinBlog`。
+**用途**：执行 Git 操作，仓库路径固定为当前工作区根目录。
 
-- 所有 git 工具调用必须传入 `repo_path: "E:\\Projects\\TixXinBlog"`。
+- 所有 git 工具调用必须传入 `repo_path` 为当前工作区根目录的绝对路径。
 - 提供的工具包括：`git_status`、`git_log`、`git_diff`、`git_diff_staged`、`git_diff_unstaged`、`git_add`、`git_commit`、`git_show`、`git_branch`、`git_checkout`、`git_create_branch`、`git_reset`。
 - 仅在用户明确要求时执行写操作（commit、reset、checkout）。
 - 查看变更、日志等只读操作可主动使用。
+- 提交时必须遵循 `.cursor/rules/git-commit-message.mdc` 中的提交消息规范。
 - 不要通过此 MCP 执行 force push、hard reset 等危险操作。
 
 ## 3. Playwright — 浏览器自动化
@@ -47,7 +48,7 @@ alwaysApply: true
 
 **用途**：跨会话持久化存储项目关键决策、架构约定和问题解决方案。
 
-- 记忆文件位于 `E:\Projects\TixXinBlog\.cursor\mcp\memory.jsonl`。
+- 记忆文件位于工作区根目录下的 `.cursor/mcp/memory.jsonl`。
 - **应当记录的内容**：
   - 重要架构决策及其原因（如选择 SCSS 而非 TailwindCSS）
   - 反复出现的问题及其最终解决方案（如 Nuxt 组件自动导入命名规则、IPC 连接问题）

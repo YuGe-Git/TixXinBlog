@@ -23,6 +23,7 @@ alwaysApply: true
 - 优先采用组件化、模块式实现，避免复制粘贴式开发。
 - 遇到重复逻辑时，优先提炼为可复用组件、组合式函数、工具函数或业务模块。
 - 保持仓库整洁，遵守现有 `LF` 行尾约定，避免无意义的格式噪音。
+- Git 提交消息遵循 Conventional Commits 规范，描述使用中文，详见 `.cursor/rules/git-commit-message.mdc`。
 
 ## 文件头注释规范
 
