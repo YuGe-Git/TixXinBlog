@@ -17,7 +17,9 @@
           <span v-if="post.pinned" class="post-item__pin">
             <Icon name="lucide:pin" size="12" /> 置顶
           </span>
-          <h2 class="post-item__title">{{ post.title }}</h2>
+          <h2 class="post-item__title">
+            <span :class="{ 'post-item__title-highlight': !!post.cover }">{{ post.title }}</span>
+          </h2>
         </div>
         <div class="post-item__date">{{ formattedDate }}</div>
       </div>
@@ -112,6 +114,11 @@ function tagStyle(color: string) {
     .post-item__title {
       color: var(--accent);
     }
+
+    /* 有封面时标题叠在封面叠层上，悬停仍用强调色 */
+    &:has(.post-item__cover-bg) .post-item__title {
+      color: var(--accent);
+    }
     
     .post-item__cover-bg img {
       transform: scale(1.05);
@@ -187,12 +194,15 @@ function tagStyle(color: string) {
   position: relative;
   z-index: 2;
   
-  /* 仅在有背景图的卡片中添加半透明背景 */
+  /* 有封面：磨砂叠层（亮色浅玻璃 / 暗色暗底，由全局 token 控制） */
   .post-item:has(.post-item__cover-bg) & {
-    background: var(--surface-1-alpha);
-    backdrop-filter: blur(12px);
+    background: var(--surface-cover-overlay);
+    backdrop-filter: var(--cover-overlay-backdrop);
+    border: var(--cover-overlay-border);
+    box-shadow: var(--cover-overlay-shadow);
     padding: 0.25rem 0.5rem;
     border-radius: $radius-sm;
+    color: var(--text-on-cover-muted);
   }
 }
 
@@ -205,6 +215,11 @@ function tagStyle(color: string) {
   font-size: 0.75rem;
   flex-shrink: 0;
   margin-top: 0.25rem; /* 微调对齐标题文本 */
+  padding: 0.2rem 0.5rem;
+  border-radius: $radius-sm;
+  line-height: 1.2;
+  background: var(--pin-badge-bg);
+  border: 1px solid var(--pin-badge-border);
 }
 
 .post-item__dot {
@@ -215,6 +230,7 @@ function tagStyle(color: string) {
 }
 
 .post-item__title {
+  margin: 0;
   font-size: 1.125rem;
   font-weight: 700;
   line-height: 1.4;
@@ -222,21 +238,45 @@ function tagStyle(color: string) {
   transition: color 0.2s;
   position: relative;
   z-index: 2; /* 确保标题在最上层 */
-  
-  /* 仅在有背景图的卡片中添加半透明背景，保证在图片上清晰可读 */
+
   .post-item:has(.post-item__cover-bg) & {
-    background: var(--surface-1-alpha);
-    backdrop-filter: blur(12px);
-    padding: 0.25rem 0.5rem;
-    border-radius: $radius-sm;
-    margin-left: -0.5rem; /* 抵消 padding 带来的视觉偏移 */
-    display: inline-block; /* 让背景紧贴文字 */
+    color: var(--text-on-cover);
+    /* 避免块级占满 flex 行宽导致行框过宽，clone 背景被拉满整行 */
+    flex: 0 1 auto;
+    align-self: flex-start;
+    width: fit-content;
+    max-width: 100%;
   }
 
   @media (min-width: $breakpoint-sm) {
     font-size: 1.25rem;
     max-width: 85%; /* 允许标题向右延伸到图片上 */
+
+    .post-item:has(.post-item__cover-bg) & {
+      max-width: 85%;
+    }
   }
+}
+
+/*
+ * 换行时每行独立绘制背景（box-decoration-break: clone）。
+ * 不在此处使用 backdrop-filter：Chromium 对多行 inline 片段易按「整行行框」铺色。
+ * 阴影改用 filter: drop-shadow，轮廓随文字而非矩形。
+ */
+.post-item__title-highlight {
+  display: inline;
+  padding: 0.2em 0.45em;
+  border-radius: $radius-sm;
+  background: var(--surface-cover-overlay);
+  border: var(--cover-overlay-border);
+  box-shadow: none;
+  filter: drop-shadow(0 1px 2px rgba(15, 23, 42, 0.07));
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.dark .post-item__title-highlight {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.35));
 }
 
 .post-item__summary {
@@ -271,19 +311,13 @@ function tagStyle(color: string) {
   }
 }
 
-/* 抽离出共用的半透明背景样式 */
-%footer-card-bg {
-  background: var(--surface-1-alpha);
-  backdrop-filter: blur(12px);
-  padding: 0.5rem 0.75rem;
-  border-radius: $radius-md;
-}
-
+/* 底部元信息栏：无封面时用实色表面，避免浅色主题下仍出现封面专用白描边/阴影 */
 .post-item__tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
-  @extend %footer-card-bg;
+  padding: 0.5rem 0;
+  /* 左侧标签不需要半透明背景 */
 }
 
 .post-item__meta-bottom {
@@ -293,7 +327,31 @@ function tagStyle(color: string) {
   gap: 0.75rem;
   font-size: 0.75rem;
   color: var(--text-soft);
-  @extend %footer-card-bg;
+  padding: 0.5rem 0.75rem;
+  border-radius: $radius-md;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  box-shadow: none;
+
+  .post-item:has(.post-item__cover-bg) & {
+    background: var(--surface-cover-overlay);
+    backdrop-filter: var(--cover-overlay-backdrop);
+    border: var(--cover-overlay-border);
+    box-shadow: var(--cover-overlay-shadow);
+    color: var(--text-on-cover-muted);
+
+    .post-item__dot {
+      background: currentColor;
+      opacity: 0.42;
+    }
+  }
+}
+
+/* 标签徽章：仅保留文字色，无背景 */
+.tag-badge {
+  background: transparent !important;
+  border: none !important;
+  padding: 0.125rem 0;
 }
 
 .post-item__meta-item {
