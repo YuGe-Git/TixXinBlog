@@ -12,13 +12,16 @@
 
 ## 快速开始
 
+在**项目根目录**执行：
+
 ```bash
-cd src/frontend/web-blog
 pnpm install
 pnpm dev
 ```
 
 访问 http://localhost:3456 查看本地效果。
+
+也可进入 `src/frontend/web-blog` 单独操作前端子项目。
 
 ## 项目结构
 

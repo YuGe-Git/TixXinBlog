@@ -10,12 +10,26 @@ TixXinBlog/
 ├── .vscode/              # VSCode 编辑器配置
 ├── docs/                 # 项目文档与设计说明
 ├── LICENSE               # GPL-3.0 开源协议
+├── package.json          # 根 package.json，pnpm 工作区编排
+├── pnpm-workspace.yaml   # pnpm 工作区：packages 含 src/frontend/*、src/backend/*
 ├── README.md             # 项目说明与快速开始
 ├── src/                  # 源代码根目录
 │   ├── backend/          # 后端服务
 │   └── frontend/         # 前端应用
 └── temp/                 # 临时文件（UI 原型等参考资料）
 ```
+
+### pnpm 工作区与子项目
+
+根目录 `package.json` 通过 `pnpm --filter <package-name>` 调用各子项目。新增子项目时：
+
+1. **无需修改** `pnpm-workspace.yaml`：已配置 `src/frontend/*`、`src/backend/*`，新目录自动纳入
+2. 在 `src/frontend/` 或 `src/backend/` 下创建子目录，并包含 `package.json` 且设置唯一 `name`
+3. 在根 `package.json` 的 `scripts` 中新增对应脚本，例如：
+   - `dev:admin` → `pnpm --filter web-admin dev`
+   - `dev:server` → `pnpm --filter server-main dev`
+
+预期子项目：`web-blog`（博客前台）、`web-admin`（后台管理）、`server-main`（主后端服务）。
 
 ## docs/ — 项目文档
 
@@ -80,7 +94,7 @@ src/frontend/web-blog/
 app/assets/styles/
 ├── main.scss              # 全局样式入口，按顺序引入各模块
 ├── _tokens.scss           # SCSS 编译时变量（断点、圆角、间距、字体）
-├── _variables.scss        # CSS 自定义属性（亮色/暗色主题运行时变量）
+├── _variables.scss        # CSS 自定义属性；封面叠层、置顶徽标（--pin-badge-*）、页面玻璃态（--surface-1-alpha*）
 ├── _base.scss             # 全局基础样式（重置、排版、滚动条、选区）
 ├── _components.scss       # 全局共享组件样式（卡片、导航、Tab、按钮等）
 ├── _layout.scss           # 页面布局样式（两级网格、断点响应、滚动行为）

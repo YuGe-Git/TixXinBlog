@@ -1,0 +1,19 @@
+{
+  "name": "tixxinblog",
+  "version": "0.0.1",
+  "private": true,
+  "description": "个人博客系统。前台 Nuxt 4 + Vue 3，当前处于 UI 打磨阶段。",
+  "scripts": {
+    "dev": "pnpm --filter web-blog dev",
+    "dev:blog": "pnpm --filter web-blog dev",
+    "build": "pnpm --filter web-blog build",
+    "build:blog": "pnpm --filter web-blog build",
+    "generate": "pnpm --filter web-blog generate",
+    "preview": "pnpm --filter web-blog preview",
+    "start": "pnpm --filter web-blog start"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@9.15.0"
+}
