@@ -22,11 +22,13 @@
         </template>
       </div>
       <div class="footer__divider" />
-      <div class="footer__status">
-        <span class="footer__ping"><Icon name="lucide:activity" size="12" /> PING {{ siteStatus.pingMs }}ms</span>
-        <span class="footer__dot" />
-        <span class="footer__operational">{{ siteStatus.statusText }}</span>
-      </div>
+      <CommonTooltip content="服务器延迟" placement="top">
+        <div class="footer__status">
+          <span class="footer__ping"><Icon name="lucide:activity" size="12" /> PING {{ siteStatus.pingMs }}ms</span>
+          <span class="footer__dot" />
+          <span class="footer__operational">{{ siteStatus.statusText }}</span>
+        </div>
+      </CommonTooltip>
     </div>
   </footer>
 </template>

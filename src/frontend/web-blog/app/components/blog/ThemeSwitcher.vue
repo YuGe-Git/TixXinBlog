@@ -7,16 +7,15 @@
 
 <template>
   <div class="theme-switcher card">
-    <button
-      v-for="option in themeOptions"
-      :key="option"
-      class="theme-toggle-btn"
-      :class="{ 'theme-active': currentPreference === option }"
-      :title="labels[option]"
-      @click="setTheme(option)"
-    >
-      <Icon :name="icons[option]!" size="16" />
-    </button>
+    <CommonTooltip v-for="option in themeOptions" :key="option" :content="labels[option]!">
+      <button
+        class="theme-toggle-btn"
+        :class="{ 'theme-active': currentPreference === option }"
+        @click="setTheme(option)"
+      >
+        <Icon :name="icons[option]!" size="16" />
+      </button>
+    </CommonTooltip>
   </div>
 </template>
 

@@ -12,19 +12,22 @@
       role="toolbar"
       aria-label="格式工具栏（占位）"
     >
-      <button
+      <CommonTooltip
         v-for="btn in toolbarButtons"
         :key="btn.icon"
-        type="button"
-        class="message-input__tool"
-        :title="btn.title"
-        tabindex="-1"
+        :content="btn.title"
       >
-        <Icon
-          :name="btn.icon"
-          size="16"
-        />
-      </button>
+        <button
+          type="button"
+          class="message-input__tool"
+          tabindex="-1"
+        >
+          <Icon
+            :name="btn.icon"
+            size="16"
+          />
+        </button>
+      </CommonTooltip>
       <div class="message-input__toolbar-spacer" />
       <button
         type="button"

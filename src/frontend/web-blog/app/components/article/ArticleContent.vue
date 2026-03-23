@@ -15,14 +15,16 @@
         {{ section.text }}
       </p>
       <div v-else-if="section.type === 'code'" class="article-content__code-wrap">
-        <button
-          type="button"
-          class="article-content__copy"
-          aria-label="复制代码"
-          @click="copyCode(section.text ?? '')"
-        >
-          <Icon name="lucide:copy" size="16" />
-        </button>
+        <CommonTooltip content="复制代码" placement="top">
+          <button
+            type="button"
+            class="article-content__copy"
+            aria-label="复制代码"
+            @click="copyCode(section.text ?? '')"
+          >
+            <Icon name="lucide:copy" size="16" />
+          </button>
+        </CommonTooltip>
         <pre class="article-content__pre"><code>{{ section.text }}</code></pre>
       </div>
       <blockquote v-else-if="section.type === 'quote'" class="article-content__quote">

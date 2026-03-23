@@ -53,15 +53,20 @@
 
     <!-- 返回顶部 -->
     <Transition name="back-to-top">
-      <button
+      <CommonTooltip
         v-if="showBackToTop && showBackToTopBtn"
-        type="button"
-        class="custom-scrollbar__back-to-top"
-        aria-label="返回顶部"
-        @click="scrollToTop(true)"
+        content="返回顶部"
+        placement="left"
       >
-        <Icon name="lucide:chevron-up" size="20" />
-      </button>
+        <button
+          type="button"
+          class="custom-scrollbar__back-to-top"
+          aria-label="返回顶部"
+          @click="scrollToTop(true)"
+        >
+          <Icon name="lucide:chevron-up" size="20" />
+        </button>
+      </CommonTooltip>
     </Transition>
   </div>
 </template>

@@ -6,15 +6,17 @@
 -->
 
 <template>
-  <button
-    class="appearance-fab"
-    :class="{ 'appearance-fab--open': isDrawerOpen }"
-    type="button"
-    aria-label="界面设置"
-    @click="toggleDrawer"
-  >
-    <Icon name="lucide:settings" size="18" class="appearance-fab__icon" />
-  </button>
+  <CommonTooltip content="界面设置" placement="top">
+    <button
+      class="appearance-fab"
+      :class="{ 'appearance-fab--open': isDrawerOpen }"
+      type="button"
+      aria-label="界面设置"
+      @click="toggleDrawer"
+    >
+      <Icon name="lucide:settings" size="18" class="appearance-fab__icon" />
+    </button>
+  </CommonTooltip>
 </template>
 
 <script setup lang="ts">

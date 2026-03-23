@@ -51,7 +51,6 @@
       <div
         ref="tooltipRef"
         class="heatmap-tooltip"
-        :class="{ 'heatmap-tooltip--dark': isDark }"
         :style="tooltipStyle"
       >
         <template v-if="activeCell">
@@ -85,9 +84,6 @@ interface HeatmapCell {
 
 const weekdayNames = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
 const lightColors = ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39']
-
-const colorMode = useColorMode()
-const isDark = computed(() => colorMode.value === 'dark')
 
 const gridRef = ref<HTMLElement | null>(null)
 const tooltipRef = ref<HTMLElement | null>(null)
@@ -294,25 +290,16 @@ function onCellLeave(e: Event) {
   position: fixed;
   z-index: 9999;
   transform: translate(-50%, -110%);
-  background: #1e293b;
-  color: #fff;
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
   font-size: 11px;
   padding: 6px 12px;
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--tooltip-shadow);
   line-height: 1.6;
   white-space: nowrap;
   transition: opacity 0.15s;
   pointer-events: none;
-
-  &--dark {
-    background: #e2e8f0;
-    color: #1e293b;
-
-    .heatmap-tooltip__arrow {
-      border-top-color: #e2e8f0;
-    }
-  }
 }
 
 .heatmap-tooltip__arrow {
@@ -321,7 +308,7 @@ function onCellLeave(e: Event) {
   transform: translateX(-50%);
   top: 100%;
   border: 5px solid transparent;
-  border-top-color: #1e293b;
+  border-top-color: var(--tooltip-bg);
 }
 
 .heatmap-tooltip__date {
