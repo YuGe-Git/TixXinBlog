@@ -25,6 +25,12 @@ alwaysApply: true
 - 保持仓库整洁，遵守现有 `LF` 行尾约定，避免无意义的格式噪音。
 - Git 提交消息遵循 Conventional Commits 规范，描述使用中文，详见 `.cursor/rules/git-commit-message.mdc`。
 
+## pnpm 命令执行约定
+
+- **pnpm 命令需由用户手动执行**：Agent 不得擅自调用终端执行 `pnpm install`、`pnpm run xxx`、`pnpm add` 等 pnpm 相关命令。
+- **仅可提示**：需要安装依赖、运行脚本或执行 pnpm 操作时，只输出提示文案，告知用户应执行的命令。
+- **例外**：若用户在当前对话中明确表示「可以帮我执行」「你直接运行」等，则可在该对话内代为执行 pnpm 命令。
+
 ## 文件头注释规范
 
 - 所有代码文件（`.vue`、`.ts`、`.scss`）顶部必须包含统一的文件头注释。

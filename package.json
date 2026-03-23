@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "description": "个人博客系统。前台 Nuxt 4 + Vue 3，当前处于 UI 打磨阶段。",
+  "type": "module",
   "scripts": {
     "dev": "pnpm --filter web-blog dev",
     "dev:blog": "pnpm --filter web-blog dev",
@@ -10,7 +11,8 @@
     "build:blog": "pnpm --filter web-blog build",
     "generate": "pnpm --filter web-blog generate",
     "preview": "pnpm --filter web-blog preview",
-    "start": "pnpm --filter web-blog start"
+    "start": "pnpm --filter web-blog start",
+    "clear": "node scripts/clear.js"
   },
   "engines": {
     "node": ">=20"
