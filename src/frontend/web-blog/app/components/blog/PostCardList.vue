@@ -93,6 +93,7 @@ function loadMore() {
 let observer: IntersectionObserver | null = null
 
 function getScrollRoot(): Element | null {
+  if (import.meta.server) return null
   const vp = scrollbarRef.value?.viewport
   const el = unref(vp)
   return el instanceof HTMLElement ? el : null
