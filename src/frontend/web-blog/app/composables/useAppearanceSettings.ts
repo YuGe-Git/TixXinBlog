@@ -165,6 +165,9 @@ export function useAppearanceSettings() {
     setTheme('system')
     contentTransitionPreset.value = DEFAULT_CONTENT_TRANSITION_PRESET
     sidebarAnimationPreset.value = DEFAULT_SIDEBAR_ANIMATION_PRESET
+
+    const { setLayoutTheme } = useLayoutTheme()
+    setLayoutTheme('classic')
   }
 
   if (import.meta.client && !initialized.value) {

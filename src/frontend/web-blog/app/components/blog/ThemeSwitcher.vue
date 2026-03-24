@@ -1,55 +1,62 @@
 <!--
   @file ThemeSwitcher.vue
-  @description 主题切换器组件，支持亮色/跟随系统/暗色三种模式
+  @description 顶栏颜色主题切换按钮，循环切换 light → system → dark
   @author TixXin
-  @since 2025-03-17
+  @since 2026-03-24
 -->
 
 <template>
-  <div class="theme-switcher card">
-    <CommonTooltip v-for="option in themeOptions" :key="option" :content="labels[option]!">
-      <button
-        class="theme-toggle-btn"
-        :class="{ 'theme-active': currentPreference === option }"
-        @click="setTheme(option)"
-      >
-        <Icon :name="icons[option]!" size="16" />
-      </button>
-    </CommonTooltip>
-  </div>
+  <button
+    type="button"
+    class="theme-switcher"
+    :aria-label="`切换主题（当前：${label}）`"
+    @click="cycleTheme"
+  >
+    <Icon :name="icon" size="18" />
+  </button>
 </template>
 
 <script setup lang="ts">
-const { currentPreference, themeOptions, setTheme } = useTheme()
+import { COLOR_MODE_LABELS } from '~/features/theme/types'
 
-const icons: Record<string, string> = {
-  light: 'lucide:sun',
-  system: 'lucide:monitor',
-  dark: 'lucide:moon',
-}
+const { currentPreference, setTheme, themeOptions } = useTheme()
 
-const labels: Record<string, string> = {
-  light: '浅色模式',
-  system: '跟随系统',
-  dark: '深色模式',
+const icon = computed(() => {
+  const icons: Record<string, string> = {
+    light: 'lucide:sun',
+    system: 'lucide:monitor',
+    dark: 'lucide:moon',
+  }
+  return icons[currentPreference.value] ?? 'lucide:monitor'
+})
+
+const label = computed(() => COLOR_MODE_LABELS[currentPreference.value])
+
+function cycleTheme() {
+  const idx = themeOptions.indexOf(currentPreference.value)
+  const next = themeOptions[(idx + 1) % themeOptions.length]
+  setTheme(next)
 }
 </script>
 
 <style lang="scss" scoped>
 .theme-switcher {
-  display: none;
-  padding: 0.375rem;
-  gap: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: $radius-sm;
+  color: var(--text-soft);
+  transition: $transition-fast;
 
-  @media (min-width: $breakpoint-lg) {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  &:hover {
+    color: var(--text-main);
+    background: var(--surface-2);
   }
-}
 
-.theme-toggle-btn {
-  flex: 1;
-  font-size: 0.875rem;
+  &:active {
+    transform: scale(0.92);
+  }
 }
 </style>

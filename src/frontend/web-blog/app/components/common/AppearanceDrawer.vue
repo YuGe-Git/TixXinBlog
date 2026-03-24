@@ -41,6 +41,26 @@
 
           <section class="appearance-section">
             <div class="appearance-section__head">
+              <h3 class="appearance-section__title">布局主题</h3>
+              <span class="appearance-section__value">{{ layoutThemeLabel }}</span>
+            </div>
+            <div class="appearance-option-grid appearance-option-grid--theme">
+              <button
+                v-for="theme in availableThemes"
+                :key="theme.id"
+                type="button"
+                class="appearance-option"
+                :class="{ 'appearance-option--active': currentThemeId === theme.id }"
+                @click="setLayoutTheme(theme.id)"
+              >
+                <Icon :name="theme.icon" size="18" />
+                <span class="appearance-option__label">{{ theme.name }}</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="appearance-section">
+            <div class="appearance-section__head">
               <h3 class="appearance-section__title">主内容切换</h3>
               <span class="appearance-section__value">{{ contentTransitionLabel }}</span>
             </div>
@@ -110,6 +130,15 @@ const {
   setSidebarAnimationPreset,
   resetAppearanceSettings,
 } = useAppearanceSettings()
+
+const {
+  currentThemeId,
+  activeTheme,
+  availableThemes,
+  setLayoutTheme,
+} = useLayoutTheme()
+
+const layoutThemeLabel = computed(() => activeTheme.value.name)
 
 const themeLabels = COLOR_MODE_LABELS
 
