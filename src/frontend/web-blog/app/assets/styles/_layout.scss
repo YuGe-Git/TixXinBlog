@@ -7,9 +7,14 @@
 
 @use 'tokens' as *;
 
+// 页面根容器：所有主题共享的基础属性
 .page-root {
-  padding: 1rem;
   min-height: 100vh;
+}
+
+// 经典三栏主题：间距 + 固定视口高度，禁止文档滚动（由各栏内部独立滚动）
+.theme-classic {
+  padding: 1rem;
 
   @media (min-width: $breakpoint-md) {
     padding: 2rem;
@@ -111,8 +116,10 @@
   overflow: hidden;
   transition: $transition-colors;
 
-  @media (min-width: $breakpoint-xl) {
-    height: 100%;
+  .theme-classic & {
+    @media (min-width: $breakpoint-xl) {
+      height: 100%;
+    }
   }
 }
 
