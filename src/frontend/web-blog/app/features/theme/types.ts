@@ -8,6 +8,9 @@
 export const COLOR_MODE_OPTIONS = ['light', 'system', 'dark'] as const
 export type ThemeOption = typeof COLOR_MODE_OPTIONS[number]
 
+export type { BlogLayoutTheme, LayoutThemePreset } from '~/themes/types'
+export { LAYOUT_THEME_PRESETS, DEFAULT_LAYOUT_THEME } from '~/themes/types'
+
 export const CONTENT_TRANSITION_PRESETS = [
   'vertical-slide',
   'soft-slide',
