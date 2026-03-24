@@ -1,6 +1,6 @@
 <!--
   @file ThemeSwitcher.vue
-  @description 顶栏颜色主题切换按钮，循环切换 light → system → dark
+  @description 颜色主题切换按钮，在 light / dark 之间切换
   @author TixXin
   @since 2026-03-24
 -->
@@ -19,23 +19,16 @@
 <script setup lang="ts">
 import { COLOR_MODE_LABELS } from '~/features/theme/types'
 
-const { currentPreference, setTheme, themeOptions } = useTheme()
+const { currentPreference, setTheme } = useTheme()
 
-const icon = computed(() => {
-  const icons: Record<string, string> = {
-    light: 'lucide:sun',
-    system: 'lucide:monitor',
-    dark: 'lucide:moon',
-  }
-  return icons[currentPreference.value] ?? 'lucide:monitor'
-})
+const icon = computed(() =>
+  currentPreference.value === 'dark' ? 'lucide:moon' : 'lucide:sun',
+)
 
 const label = computed(() => COLOR_MODE_LABELS[currentPreference.value])
 
 function cycleTheme() {
-  const idx = themeOptions.indexOf(currentPreference.value)
-  const next = themeOptions[(idx + 1) % themeOptions.length]
-  setTheme(next)
+  setTheme(currentPreference.value === 'dark' ? 'light' : 'dark')
 }
 </script>
 
