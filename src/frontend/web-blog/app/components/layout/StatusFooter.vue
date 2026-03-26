@@ -34,12 +34,8 @@
 </template>
 
 <script setup lang="ts">
-import { mockFooterLinks, mockPoweredBy, mockSiteStatus } from '~/features/site/mock'
-
 const currentYear = new Date().getFullYear()
-const footerLinks = mockFooterLinks
-const poweredBy = mockPoweredBy
-const siteStatus = mockSiteStatus
+const { footerLinks, poweredBy, siteStatus } = useSiteInfo()
 </script>
 
 <style lang="scss" scoped>

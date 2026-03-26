@@ -31,17 +31,16 @@
 </template>
 
 <script setup lang="ts">
-import { mockPostTabs } from '~/features/post/mock'
+import type { PostTab } from '~/features/post/types'
 
 defineProps<{
   modelValue: string
+  tabs: PostTab[]
 }>()
 
 defineEmits<{
   'update:modelValue': [value: string]
 }>()
-
-const tabs = mockPostTabs
 </script>
 
 <style lang="scss" scoped>

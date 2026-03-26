@@ -23,10 +23,8 @@
 </template>
 
 <script setup lang="ts">
-import { mockNavItems } from '~/features/nav/mock'
-
 const route = useRoute()
-const navItems = mockNavItems.filter(item => !item.desktopOnly)
+const { mobileNavItems: navItems } = useNavItems()
 
 function isActive(to: string) {
   return route.path === to
