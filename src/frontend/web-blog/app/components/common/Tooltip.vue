@@ -42,10 +42,12 @@ const props = withDefaults(defineProps<{
   placement?: Placement
   offset?: number
   delay?: number
+  disabled?: boolean
 }>(), {
   placement: undefined,
   offset: 8,
   delay: 200,
+  disabled: false,
 })
 
 const triggerRef = ref<HTMLElement | null>(null)
@@ -67,7 +69,12 @@ function getTriggerElement(): HTMLElement | null {
   return (el.firstElementChild as HTMLElement) ?? el
 }
 
+watch(() => props.disabled, (val) => {
+  if (val) visible.value = false
+})
+
 function onEnter() {
+  if (props.disabled) return
   if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
   showTimer = setTimeout(() => {
     visible.value = true
