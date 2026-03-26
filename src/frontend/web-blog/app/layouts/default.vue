@@ -6,9 +6,9 @@
 -->
 
 <template>
-  <component :is="activeTheme.layoutComponent" :key="activeTheme.id" />
+  <component :is="activeLayout" :key="activeTheme.id" />
 </template>
 
 <script setup lang="ts">
-const { activeTheme } = useLayoutTheme()
+const { activeTheme, activeLayout } = useLayoutTheme()
 </script>

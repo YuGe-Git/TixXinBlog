@@ -9,7 +9,9 @@ import type {
   ContentTransitionPreset,
   SidebarAnimationPreset,
 } from '~/features/theme/types'
+import type { ThemeCustomizerCapability } from '~/themes/contracts'
 import { nextTick } from 'vue'
+import { DEFAULT_THEME_ID } from '~/themes/contracts'
 import {
   COLOR_MODE_LABELS,
   CONTENT_TRANSITION_OPTIONS,
@@ -40,6 +42,12 @@ function blurAppearanceTrigger() {
 
 export function useAppearanceSettings() {
   const { currentPreference, themeOptions, setTheme } = useTheme()
+  const { activeTheme } = useLayoutTheme()
+
+  /** 查询当前主题是否支持指定的设置面板定制项 */
+  function isCapabilitySupported(cap: ThemeCustomizerCapability): boolean {
+    return activeTheme.value.capabilities.customizer?.includes(cap) ?? false
+  }
 
   const isDrawerOpen = useState('appearance-drawer-open', () => false)
   const contentTransitionPreset = useState<ContentTransitionPreset>(
@@ -167,7 +175,7 @@ export function useAppearanceSettings() {
     sidebarAnimationPreset.value = DEFAULT_SIDEBAR_ANIMATION_PRESET
 
     const { setLayoutTheme } = useLayoutTheme()
-    setLayoutTheme('classic')
+    setLayoutTheme(DEFAULT_THEME_ID)
   }
 
   if (import.meta.client && !initialized.value) {
@@ -212,6 +220,7 @@ export function useAppearanceSettings() {
 
   return {
     isDrawerOpen,
+    isCapabilitySupported,
     themeOptions,
     currentPreference,
     setTheme,

@@ -19,7 +19,10 @@
 
       <Transition name="drawer-panel">
         <aside v-if="isDrawerOpen" class="appearance-drawer card">
-          <section class="appearance-section appearance-section--first">
+          <section
+            v-if="isCapabilitySupported('colorMode')"
+            class="appearance-section appearance-section--first"
+          >
             <div class="appearance-section__head">
               <h3 class="appearance-section__title">颜色主题</h3>
               <span class="appearance-section__value">{{ themeLabel }}</span>
@@ -42,7 +45,11 @@
           <section class="appearance-section">
             <div class="appearance-section__head">
               <h3 class="appearance-section__title">布局主题</h3>
-              <span class="appearance-section__value">{{ layoutThemeLabel }}</span>
+              <span class="appearance-section__value">
+                {{ layoutThemeLabel }}
+                <span v-if="switchingState === 'loading'" class="appearance-section__status">切换中…</span>
+                <span v-else-if="switchingState === 'error'" class="appearance-section__status appearance-section__status--error">切换失败</span>
+              </span>
             </div>
             <div class="appearance-option-grid appearance-option-grid--theme">
               <button
@@ -50,16 +57,26 @@
                 :key="theme.id"
                 type="button"
                 class="appearance-option"
-                :class="{ 'appearance-option--active': currentThemeId === theme.id }"
+                :class="{
+                  'appearance-option--active': currentThemeId === theme.id,
+                  'appearance-option--disabled': switchingState === 'loading' && currentThemeId !== theme.id,
+                }"
+                :disabled="switchingState === 'loading'"
                 @click="setLayoutTheme(theme.id)"
+                @mouseenter="preloadTheme(theme.id)"
               >
-                <Icon :name="theme.icon" size="18" />
+                <Icon v-if="switchingState !== 'loading' || currentThemeId === theme.id" :name="theme.icon" size="18" />
+                <Icon v-else name="lucide:loader-2" size="18" class="appearance-option__spinner" />
                 <span class="appearance-option__label">{{ theme.name }}</span>
+                <span class="appearance-option__version">v{{ theme.version }}</span>
               </button>
             </div>
           </section>
 
-          <section class="appearance-section">
+          <section
+            v-if="isCapabilitySupported('contentTransition')"
+            class="appearance-section"
+          >
             <div class="appearance-section__head">
               <h3 class="appearance-section__title">主内容切换</h3>
               <span class="appearance-section__value">{{ contentTransitionLabel }}</span>
@@ -79,7 +96,10 @@
             </div>
           </section>
 
-          <section class="appearance-section">
+          <section
+            v-if="isCapabilitySupported('sidebarAnimation')"
+            class="appearance-section"
+          >
             <div class="appearance-section__head">
               <h3 class="appearance-section__title">右侧栏动画</h3>
               <span class="appearance-section__value">{{ sidebarAnimationLabel }}</span>
@@ -115,6 +135,7 @@ import { COLOR_MODE_LABELS } from '~/features/theme/types'
 
 const {
   isDrawerOpen,
+  isCapabilitySupported,
   closeDrawer,
   currentPreference,
   themeOptions,
@@ -135,7 +156,9 @@ const {
   currentThemeId,
   activeTheme,
   availableThemes,
+  switchingState,
   setLayoutTheme,
+  preloadTheme,
 } = useLayoutTheme()
 
 const layoutThemeLabel = computed(() => activeTheme.value.name)
@@ -268,6 +291,35 @@ onBeforeUnmount(() => {
   font-size: 0.625rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.appearance-option__version {
+  font-size: 0.5625rem;
+  color: var(--text-muted, var(--text-soft));
+  opacity: 0.6;
+  font-variant-numeric: tabular-nums;
+}
+
+.appearance-option--disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.appearance-option__spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+.appearance-section__status {
+  font-size: 0.625rem;
+  margin-left: 0.25rem;
+}
+
+.appearance-section__status--error {
+  color: var(--danger, #ef4444);
 }
 
 .appearance-drawer__footer {
